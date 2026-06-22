@@ -75,13 +75,17 @@ ul.task-list li input[type="checkbox"] {
 
 <p>#| label: setup #| include: false suppressPackageStartupMessages(library(tidyverse))</p>
 <p>#| label: storm-plot #| warning: false #| message: false</p>
-<section id="process-the-data-to-count-unique-named-storms-per-year" class="level1">
-<h1>Process the data to count unique named storms per year</h1>
-<p>storms_per_year &lt;- storms %&gt;% filter(!is.na(name)) %&gt;% group_by(year) %&gt;% summarize(num_storms = n_distinct(name))</p>
+<section id="process-the-data-to-count-storms-by-type-per-year" class="level1">
+<h1>Process the data to count storms by type per year</h1>
+<p>storms_per_year &lt;- storms %&gt;% filter(status %in% c(“tropical depression”, “tropical storm”, “hurricane”)) %&gt;% filter(!is.na(name)) %&gt;% group_by(year, status) %&gt;% summarize(count = n_distinct(name), .groups = “drop”)</p>
 </section>
-<section id="create-the-visualization" class="level1">
-<h1>Create the visualization</h1>
-<p>ggplot(storms_per_year, aes(x = year, y = num_storms)) + geom_line(color = “steelblue”, size = 1) + geom_point(color = “darkblue”) + theme_minimal() + labs( title = “Number of Named Storms per Year”, x = “Year”, y = “Number of Unique Storms” )</p>
+<section id="define-a-custom-color-scale-for-the-storm-types" class="level1">
+<h1>Define a custom color scale for the storm types</h1>
+<p>storm_colors &lt;- c( “tropical depression” = “#89CFF0”, “tropical storm” = “#FFA500”, “hurricane” = “#8B0000” )</p>
+</section>
+<section id="create-the-stacked-area-chart" class="level1">
+<h1>Create the stacked area chart</h1>
+<p>ggplot(storms_per_year, aes(x = year, y = count, fill = status)) + geom_area(position = “stack”, alpha = 0.85) + scale_fill_manual(values = storm_colors) + theme_minimal() + labs( title = “Storm Counts by Type per Year”, x = “Year”, y = “Count of Storms”, fill = “Storm Type” ) + theme( legend.position = “top”, plot.title = element_text(face = “bold”) )</p>
 </section>
 
 </main>

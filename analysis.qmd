@@ -15,19 +15,33 @@ suppressPackageStartupMessages(library(tidyverse))
 #| warning: false
 #| message: false
 
-# Process the data to count unique named storms per year
+# Process the data to count storms by type per year
 storms_per_year <- storms %>%
+  filter(status %in% c("tropical depression", "tropical storm", "hurricane")) %>%
   filter(!is.na(name)) %>%
-  group_by(year) %>%
-  summarize(num_storms = n_distinct(name))
+  group_by(year, status) %>%
+  summarize(count = n_distinct(name), .groups = "drop")
 
-# Create the visualization
-ggplot(storms_per_year, aes(x = year, y = num_storms)) +
-  geom_line(color = "steelblue", size = 1) +
-  geom_point(color = "darkblue") +
+# Define a custom color scale for the storm types
+storm_colors <- c(
+  "tropical depression" = "#89CFF0",
+  "tropical storm" = "#FFA500",
+  "hurricane" = "#8B0000"
+)
+
+# Create the stacked area chart
+ggplot(storms_per_year, aes(x = year, y = count, fill = status)) +
+  geom_area(position = "stack", alpha = 0.85) +
+  scale_fill_manual(values = storm_colors) +
   theme_minimal() +
   labs(
-    title = "Number of Named Storms per Year",
+    title = "Storm Counts by Type per Year",
     x = "Year",
-    y = "Number of Unique Storms"
+    y = "Count of Storms",
+    fill = "Storm Type"
+  ) +
+  theme(
+    legend.position = "top",
+    plot.title = element_text(face = "bold")
   )
+  
