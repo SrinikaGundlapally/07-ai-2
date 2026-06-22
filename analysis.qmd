@@ -1,0 +1,33 @@
+---
+title: "Exploring Storms"
+author: "Your Name"
+format: html
+execute:
+  echo: false
+---
+
+```{r}
+#| label: setup
+#| include: false
+suppressPackageStartupMessages(library(tidyverse))
+
+#| label: storm-plot
+#| warning: false
+#| message: false
+
+# Process the data to count unique named storms per year
+storms_per_year <- storms %>%
+  filter(!is.na(name)) %>%
+  group_by(year) %>%
+  summarize(num_storms = n_distinct(name))
+
+# Create the visualization
+ggplot(storms_per_year, aes(x = year, y = num_storms)) +
+  geom_line(color = "steelblue", size = 1) +
+  geom_point(color = "darkblue") +
+  theme_minimal() +
+  labs(
+    title = "Number of Named Storms per Year",
+    x = "Year",
+    y = "Number of Unique Storms"
+  )

@@ -1,0 +1,18 @@
+# Quarto build directories and logs
+.quarto/
+_site/
+_freeze/
+
+# R-specific files and user configurations
+.Rhistory
+.RData
+.Ruserdata
+.Rproj.user/
+
+# Knitr and Quarto caches
+*_cache/
+cache/
+
+# Operating system files
+.DS_Store
+Thumbs.db
